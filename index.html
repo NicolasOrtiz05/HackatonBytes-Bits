@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Riesgos Cruz Roja</title>
+    <!-- 1. Cargar Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'cruz-roja-red': '#E4002B',
+                    }
+                }
+            }
+        };
+    </script>
+
+    <!-- Fuente Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+    .btn-wsp{
+        position:fixed;
+        width:60px;
+        height:60px;
+        line-height: 63px;
+        bottom:25px;
+        right:25px;
+        background:#25d366;
+        color:#FFF;
+        border-radius:50px;
+        text-align:center;
+        font-size:35px;
+        box-shadow: 0px 1px 10px rgba(0,0,0,0.3);
+        z-index:100;
+        transition: all 300ms ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-wsp:hover{ background: #20ba5a; }
+    @media only screen and (min-width:320px) and (max-width:768px){
+        .btn-wsp{ width:63px; height:63px; line-height: 66px; }
+    }
+    .btn-wsp .icono{ font-size:28px; }
+    </style>
+    <!-- Icon-Font (Font Awesome kit) -->
+    <script src="https://kit.fontawesome.com/eb496ab1a0.js" crossorigin="anonymous"></script>
+    <!-- Leaflet (map rendering) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-sA+e2GkG6Xb5mJv8h2k3T1aQf1bI1QY7G1iJTQvQ0Ps=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-o9N1j7gGqkG3m+QvK3h2Q4k1sM6WZQ5Yk1g9p3v0zYQ=" crossorigin=""></script>
+    <!-- togeojson (KML -> GeoJSON) -->
+    <script src="https://unpkg.com/togeojson@0.16.0/dist/togeojson.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans antialiased pb-8">
+
+    <div id="topUtilityBar" class="w-full bg-[#2a3943]">
+        <div class="max-w-[1400px] mx-auto px-2 md:px-3 py-1.5 flex items-center justify-between text-xs">
+            <nav aria-label="utilidades" class="text-gray-300">
+                <ul class="flex items-center gap-3 md:gap-5">
+                    <li><span class="hover:text-white cursor-default">Oficina de Prensa y Comunicaciones</span></li>
+                    <li><span class="hover:text-white cursor-default">Hazte Proveedor</span></li>
+                    <li><span class="hover:text-white cursor-default">Convocatorias</span></li>
+                    <li>
+                        <span aria-current="page" class="text-white font-semibold underline underline-offset-4 decoration-white/80">Gestión de riesgos</span>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="flex items-center gap-2 md:gap-3">
+                <div class="hidden sm:flex items-center gap-1.5">
+                    <span class="inline-flex w-8 h-8 items-center justify-center rounded-sm bg-cruz-roja-red text-white"><i class="fab fa-facebook-f" aria-hidden="true"></i></span>
+                    <span class="inline-flex w-8 h-8 items-center justify-center rounded-sm bg-cruz-roja-red text-white"><i class="fab fa-twitter" aria-hidden="true"></i></span>
+                    <span class="inline-flex w-8 h-8 items-center justify-center rounded-sm bg-cruz-roja-red text-white"><i class="fab fa-instagram" aria-hidden="true"></i></span>
+                    <span class="inline-flex w-8 h-8 items-center justify-center rounded-sm bg-cruz-roja-red text-white"><i class="fab fa-youtube" aria-hidden="true"></i></span>
+                </div>
+                <div class="flex items-center overflow-hidden rounded-sm bg-gray-600 text-white">
+                    <input type="text" placeholder="BUSCAR" class="w-28 md:w-48 uppercase tracking-wide text-[11px] md:text-xs bg-gray-600 placeholder-gray-300 text-white px-3 py-1.5 outline-none" />
+                    <span class="px-2.5 md:px-3 text-white/90"><i class="fas fa-search" aria-hidden="true"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="topBanner" class="sticky top-0 z-40 w-full bg-white border-b-2 border-cruz-roja-red shadow-sm">
+        <div class="max-w-[1400px] mx-auto px-2 md:px-3 py-3 flex items-center gap-3">
+            <span class="inline-flex items-center justify-center w-6 h-6" aria-hidden="true">
+                <svg viewBox="0 0 24 24" class="w-6 h-6" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#E4002B" d="M10 4h4v6h6v4h-6v6h-4v-6H4v-4h6z"/>
+                </svg>
+            </span>
+            <span class="font-semibold text-gray-900 text-sm md:text-base">Cruz Roja Colombiana</span>
+        </div>
+    </div>
+
+    <div class="px-2 md:px-4 pt-4 md:pt-6 pb-2">
+        <div class="w-full max-w-[1400px] mx-auto">
+            <header class="mb-4 text-center">
+                <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Gestión de Riesgos</h1>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <section class="md:col-span-2 bg-white p-6 rounded-xl shadow-lg">
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-4">
+                        <div class="flex items-center gap-3">
+                            <button id="updateButton" class="flex items-center justify-center gap-2 bg-cruz-roja-red text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-red-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-cruz-roja-red focus:ring-opacity-50">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.992 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.992v4.992h-4.992" />
+                                </svg>
+                                <span>Actualizar Registros</span>
+                            </button>
+                            <div id="status" class="text-sm text-gray-500 ml-3">Última actualización: Nunca</div>
+                        </div>
+                    </div>
+
+                    <div id="dataContainer" class="overflow-x-auto relative border border-gray-200 rounded-lg p-4 min-h-[200px]">
+                        <div id="initialMessage" class="p-10 text-center text-gray-500">
+                            Haz clic en "Actualizar Registros" para cargar los datos.
+                        </div>
+                    </div>
+
+                    <div id="loadingSpinner" class="hidden flex items-center justify-center py-4">
+                        <div class="w-10 h-10 border-4 border-t-cruz-roja-red border-gray-200 rounded-full animate-spin"></div>
+                        <p class="ml-4 text-gray-600">Cargando datos...</p>
+                    </div>
+
+                    <div id="errorMessage" class="hidden p-4 mt-4 text-center text-red-700 bg-red-100 border border-red-300 rounded-lg">
+                        No se pudieron cargar los datos. Revisa la URL del webhook o tu escenario de Make.com.
+                    </div>
+                </section>
+
+                <aside class="bg-white p-6 rounded-xl shadow-lg flex flex-col gap-4">
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-lg font-semibold text-gray-800">Alarma</h2>
+                                <p class="text-sm text-gray-500">Estado del sistema de alerta</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <div id="alarmIndicator" class="w-3 h-3 rounded-full bg-gray-300" title="Estado de la alarma"></div>
+                                <button id="alarmToggle" class="bg-gray-200 text-gray-800 px-3 py-2 rounded-lg font-medium hover:bg-gray-300">Encender</button>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 text-sm text-gray-600" id="alarmText">Alarma apagada</div>
+                    </div>
+
+                    <div class="border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-md font-semibold text-gray-800">Nivel de alerta</h3>
+                        <div class="mt-3 flex items-center gap-2">
+                            <div id="alertLevel" class="px-3 py-1 rounded-full bg-green-100 text-green-700 font-semibold text-sm">Bajo</div>
+                            <select id="alertSelect" class="ml-auto border rounded px-2 py-1 text-sm">
+                                <option value="low">Bajo</option>
+                                <option value="medium">Medio</option>
+                                <option value="high">Alto</option>
+                            </select>
+                        </div>
+                        <div class="mt-3 flex items-center gap-3">
+                            <button id="sendAlertBtn" class="bg-cruz-roja-red text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed">
+                                Enviar por WhatsApp
+                            </button>
+                            <span id="sendAlertStatus" class="text-sm text-gray-500"></span>
+                        </div>
+                    </div>
+
+                    
+                </aside>
+            </div>
+
+        </div>
+    </div>
+
+    <section class="w-full max-w-[1400px] mx-auto mt-2 p-6 bg-white rounded-xl shadow-lg" id="barriosSection">
+        <h2 class="text-lg font-semibold mb-4">Monitoreo de Barrios</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- La María -->
+            <div class="border border-gray-200 rounded-lg p-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-semibold text-gray-800">La María</h3>
+                    <span id="lm-level" class="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700">--</span>
+                </div>
+                <div class="mt-2 text-sm text-gray-700">Índice de riesgo: <strong id="lm-risk">--</strong></div>
+                <div class="mt-3 grid grid-cols-2 gap-2 text-sm text-gray-700">
+                    <div>Humedad (rh):</div><div id="lm-rh">--</div>
+                    <div>Presión:</div><div id="lm-press">--</div>
+                    <div>Ráfaga (gust):</div><div id="lm-gust">--</div>
+                    <div>Nubes bajas:</div><div id="lm-lclouds">--</div>
+                    <div>Alerta Windy:</div><div id="lm-warning">--</div>
+                </div>
+                <div class="mt-2 text-xs text-gray-500">Actualizado: <span id="lm-time">--</span></div>
+            </div>
+            <!-- Danubio -->
+            <div class="border border-gray-200 rounded-lg p-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-semibold text-gray-800">Danubio</h3>
+                    <span id="dan-level" class="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700">--</span>
+                </div>
+                <div class="mt-2 text-sm text-gray-700">Índice de riesgo: <strong id="dan-risk">--</strong></div>
+                <div class="mt-3 grid grid-cols-2 gap-2 text-sm text-gray-700">
+                    <div>Humedad (rh):</div><div id="dan-rh">--</div>
+                    <div>Presión:</div><div id="dan-press">--</div>
+                    <div>Ráfaga (gust):</div><div id="dan-gust">--</div>
+                    <div>Nubes bajas:</div><div id="dan-lclouds">--</div>
+                    <div>Alerta Windy:</div><div id="dan-warning">--</div>
+                </div>
+                <div class="mt-2 text-xs text-gray-500">Actualizado: <span id="dan-time">--</span></div>
+            </div>
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+            <button id="refreshBarrios" class="bg-gray-100 px-3 py-2 rounded hover:bg-gray-200 text-sm">Actualizar Barrios</button>
+            <div id="barriosStatus" class="text-sm text-gray-500">Pendiente…</div>
+        </div>
+    </section>
+
+    <section class="w-full max-w-[1400px] mx-auto mt-6 p-6 bg-white rounded-xl shadow-lg" id="simulacionesSection">
+        <h2 class="text-lg font-semibold mb-4">Simulaciones</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="border border-gray-200 rounded-lg p-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-semibold text-gray-800">Simulación arriesgada</h3>
+                    <span id="simA-level" class="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700">--</span>
+                </div>
+                <div class="mt-2 text-sm text-gray-700">Índice de riesgo: <strong id="simA-risk">--</strong></div>
+            </div>
+
+            <div class="border border-gray-200 rounded-lg p-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-semibold text-gray-800">Simulación peligrosa</h3>
+                    <span id="simP-level" class="px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700">--</span>
+                </div>
+                <div class="mt-2 text-sm text-gray-700">Índice de riesgo: <strong id="simP-risk">--</strong></div>
+            </div>
+        </div>
+        <div class="mt-4 flex items-center gap-3">
+            <button id="refreshSims" class="bg-gray-100 px-3 py-2 rounded hover:bg-gray-200 text-sm">Actualizar Simulaciones</button>
+            <div id="simsStatus" class="text-sm text-gray-500">Pendiente…</div>
+        </div>
+    </section>
+
+    <section class="w-full max-w-[1400px] mx-auto mt-6 p-6 bg-white rounded-xl shadow-lg">
+        <div class="relative w-full pt-[56.25%] overflow-hidden rounded-lg border border-gray-200">
+            <iframe
+                title="Dashboard - Cruz Roja"
+                src="https://app.powerbi.com/reportEmbed?reportId=16a259fc-5c42-4765-ac32-06801a18f706&autoAuth=true&ctid=aca51631-00fe-490d-91ab-163ef87260ee"
+                class="absolute top-0 left-0 w-full h-full"
+                style="border:0;"
+                allowfullscreen="true"
+            ></iframe>
+        </div>
+    </section>
+
+    <a id="whatsappFloating" class="btn-wsp" href="https://api.whatsapp.com/send?phone=+15556454987" target="_blank" rel="noopener" aria-label="Abrir WhatsApp">
+        <i class="fa fa-whatsapp icono" aria-hidden="true"></i>
+    </a>
+
+    <script src="main.js"></script>
+</body>
+</html>
