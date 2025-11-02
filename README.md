@@ -8,7 +8,7 @@ Proyecto web de Gestión de Riesgos para Cruz Roja: un panel en HTML, Tailwind y
    ```sh
    pip install fastapi uvicorn joblib requests pandas scikit-learn
    
-2. Instala las dependencias
+2. Ejectuta el siguiente comando en la consola:
 
     ```sh
-   Inicia la api
+   uvicorn API:app --reload
