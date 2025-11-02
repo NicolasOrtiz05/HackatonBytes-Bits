@@ -1,0 +1,149 @@
+{
+  "name": "MCP Server Chats",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ODkebTAVa07qNAeY-Aq7S4s8yTuMO7DSbm-opi5OZB4",
+          "mode": "list",
+          "cachedResultName": "Prueba hack MAKE",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ODkebTAVa07qNAeY-Aq7S4s8yTuMO7DSbm-opi5OZB4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 835063034,
+          "mode": "list",
+          "cachedResultName": "CHATS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ODkebTAVa07qNAeY-Aq7S4s8yTuMO7DSbm-opi5OZB4/edit#gid=835063034"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Nombre de la persona": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Nombre_de_la_persona', ``, 'string') }}",
+            "Sector": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Sector', ``, 'string') }}",
+            "Indicador de peligro": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Indicador_de_peligro', ``, 'string') }}",
+            "Mensaje": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Mensaje', ``, 'string') }}",
+            "Fecha": "={{ $now.toFormat(\"yyyy-LL-dd\") }}\n",
+            "Hora": "={{ $now.toFormat(\"HH:mm:ss\") }}\n"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Nombre de la persona",
+              "displayName": "Nombre de la persona",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Sector",
+              "displayName": "Sector",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Indicador de peligro",
+              "displayName": "Indicador de peligro",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Mensaje",
+              "displayName": "Mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Fecha",
+              "displayName": "Fecha",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Hora",
+              "displayName": "Hora",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        32,
+        192
+      ],
+      "id": "87ac4d33-1cda-4c91-b799-1fe48b69829e",
+      "name": "Append row CHATS",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pEzRed5zlVwLjD9d",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "33e2181c-4a93-49c5-861c-a07ecfdf785f"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        -112,
+        -48
+      ],
+      "id": "a0404893-775e-40be-9376-3f17b8a39f07",
+      "name": "MCP Server Trigger CHATS",
+      "webhookId": "33e2181c-4a93-49c5-861c-a07ecfdf785f"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Append row CHATS": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger CHATS",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "67963e1b-ad33-4c3e-8e53-a565ff53fca8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69edd2c856b7465c5bc6db4dbdc40ebbc7699ab83e394b52156878a8a5156614"
+  },
+  "id": "0Gdgh0tx4BUZzzNc",
+  "tags": []
+}

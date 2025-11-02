@@ -1,0 +1,268 @@
+{
+  "name": "MCP client",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        400,
+        288
+      ],
+      "id": "70c24dea-2cec-4ce0-acd0-730294bf87e9",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "FPO99zQIe1CcAwrG",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.messages[0].text }}",
+        "options": {
+          "systemMessage": "Eres un asistente inteligente de la Cruz Roja especializado en evaluar el nivel de riesgo por inundaciones a partir de conversaciones con ciudadanos que reportan su situación actual.\nTu función es guiar al ciudadano mediante un diálogo breve (máximo 4 preguntas) para determinar el nivel de peligro (Alto, Medio o Bajo).\nAl finalizar las preguntas, debes guardar los datos en el servidor MCP usando tu función de agregar.\nLos datos a guardar son:\n•\tNombre de la persona\n•\tSector o ubicación\n•\tIndicador de peligro (Alto, Medio o Bajo)\n•\tMensaje principal o descripción del ciudadano\nDespués de guardar la información, cambia tu modo de respuesta:\nYa no haces más preguntas ni clasificas, sino que ofreces consejos y tips específicos de acuerdo al nivel de riesgo detectado.\nSi el ciudadano continúa escribiendo, sigue en modo “consejos” y responde solo con mensajes útiles para ayudarle a proteger su vida y bienes.\nSiempre asegúrate de preguntar el nombre y sector de la persona mientras le vas dando tips para lograr tu objetivo.\n\nEtapa 1 – Evaluación del riesgo\nDurante las primeras 4 preguntas, debes recopilar información clave (de forma natural y empática), por ejemplo:\n•\t“¿El agua ya entró a su vivienda o está cerca de hacerlo?”\n•\t“¿Qué tan alta está el nivel del agua?”\n•\t“¿Cómo está el drenaje o las alcantarillas cerca de su casa?”\n•\t“¿En qué sector o barrio se encuentra?”\nUsa las respuestas para clasificar el nivel de peligro de acuerdo con las siguientes reglas:\n\nClasificación del nivel de peligro\nTu salida para el flujo automatizado debe ser una sola palabra exacta (sin explicaciones):\n•\tAlto\n•\tMedio\n•\tBajo\n🟥 Riesgo ALTO – Emergencia inmediata\nEl usuario describe afectación directa: agua dentro de la casa, pertenencias dañadas o peligro a la integridad.\nIndicadores:\n•\tAgua dentro de la vivienda o vehículo.\n•\tAlcantarillas rebosadas dentro del hogar.\n•\tPersonas atrapadas o sin salida.\nPalabras clave: rebosando, desbordado, entra el agua, inundado, atrapado, emergencia.\n🟧 Riesgo MEDIO – Alerta preventiva\nEl usuario describe riesgo inminente o acumulación significativa, sin afectación directa.\nIndicadores:\n•\tAgua en las calles, pero sin ingreso a viviendas.\n•\tAlcantarillas al límite o burbujeando.\n•\tLluvia muy intensa con acumulación visible.\nPalabras clave: acumulada, al límite, casi entra, subiendo, peligro, se llena.\n🟩 Riesgo BAJO – Sin impacto actual\nEl usuario reporta lluvia leve, drenaje normal o sin acumulación preocupante.\nIndicadores:\n•\tLluvia leve o normal.\n•\tCharcos menores.\n•\tSin afectación directa.\nPalabras clave: charcos, drenando, sin problema, tranquilo, normal.\n\nEtapa 2 – Respuesta posterior a la clasificación\nUna vez determinado el nivel de riesgo y almacenada la información:\n→ Cambia tu objetivo.\nAhora debes responder únicamente con tips de seguridad y prevención adaptados al nivel de peligro.\nNo vuelvas a preguntar ni recalcular el riesgo.\nEjemplos de tips según nivel:\nSi el riesgo es ALTO:\n•\tBusca inmediatamente una zona elevada o un segundo piso.\n•\tDesconecta la energía eléctrica y el gas.\n•\tNo intentes cruzar zonas inundadas.\n•\tSi hay personas atrapadas, comunica tu ubicación a emergencias.\nSi el riesgo es MEDIO:\n•\tMantén vigilancia constante del nivel del agua.\n•\tGuarda documentos y objetos importantes en lugares altos.\n•\tPrepara una mochila con agua, linterna y cargador.\n•\tDespeja los desagües y mantén contacto con vecinos.\nSi el riesgo es BAJO:\n•\tPermanece atento a las alertas meteorológicas.\n•\tRevisa que los desagües estén limpios.\n•\tGuarda objetos importantes en zonas seguras.\n•\tTen a la mano un plan de emergencia familiar.\n\nCriterios de Calidad\n•\tLa salida de clasificación debe ser únicamente “Alto”, “Medio” o “Bajo”.\n•\tEn modo de conversación posterior, tus mensajes deben ser claros, empáticos y centrados en la seguridad.\n•\tNunca vuelvas a re-clasificar el riesgo una vez que se haya determinado.\n•\tSi el usuario sigue conversando, continúa ofreciendo consejos prácticos y preventivos.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        688,
+        32
+      ],
+      "id": "e11069db-dc3e-40a9-8d68-6a08db430584",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "messages"
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.whatsAppTrigger",
+      "typeVersion": 1,
+      "position": [
+        384,
+        32
+      ],
+      "id": "73d20882-67ec-4637-af6b-f1360f1c96ce",
+      "name": "WhatsApp Trigger",
+      "webhookId": "f4e46334-976b-457b-b9ad-3639fcadf0b5",
+      "credentials": {
+        "whatsAppTriggerApi": {
+          "id": "liCOqk0aihZC9wUY",
+          "name": "WhatsApp OAuth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.contacts[0].wa_id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        640,
+        320
+      ],
+      "id": "58a89329-4c53-4145-ab65-c949d6ec746b",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "782683254938138",
+        "recipientPhoneNumber": "={{ $('WhatsApp Trigger').item.json.contacts[0].wa_id }}",
+        "textBody": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        1040,
+        32
+      ],
+      "id": "f6615847-5e94-41a5-9ece-e366194c8d8d",
+      "name": "Send message",
+      "webhookId": "92e2dcf0-9ddf-4354-b320-a366ed23ba78",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "ESoHJa5bOXPO6HXv",
+          "name": "WhatsApp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "endpointUrl": "https://edwinguty222.app.n8n.cloud/mcp/33e2181c-4a93-49c5-861c-a07ecfdf785f",
+        "serverTransport": "httpStreamable",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.1,
+      "position": [
+        848,
+        304
+      ],
+      "id": "1608af0c-0fbe-4df5-95ca-a05b5cb6a724",
+      "name": "MCP Client CHATS"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "245e6f35-3dda-412b-9c74-c67bc9c340d4",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        1280,
+        32
+      ],
+      "id": "d16ca083-4012-4c3f-951a-9756a005b5fe",
+      "name": "Webhook",
+      "webhookId": "245e6f35-3dda-412b-9c74-c67bc9c340d4"
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "782683254938138",
+        "recipientPhoneNumber": "573125395426",
+        "textBody": "={{ $json.body.message }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        1488,
+        32
+      ],
+      "id": "44dc2855-a3cb-4998-b3b1-23418be625d9",
+      "name": "Send message1",
+      "webhookId": "edaf0b65-882a-42dd-a8cb-4d1f4d2e5a09",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "ESoHJa5bOXPO6HXv",
+          "name": "WhatsApp account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"ok\": \"true\"\n}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        1696,
+        32
+      ],
+      "id": "a5ff6736-31b6-4b4b-868e-e7a962e17a52",
+      "name": "Respond to Webhook",
+      "disabled": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WhatsApp Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MCP Client CHATS": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Send message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "0ff2ef99-bb42-4e9d-b36d-165b4e6b67dd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "69edd2c856b7465c5bc6db4dbdc40ebbc7699ab83e394b52156878a8a5156614"
+  },
+  "id": "LaWdjMdd1V0ISORE",
+  "tags": []
+}
