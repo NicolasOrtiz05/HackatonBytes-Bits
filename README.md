@@ -1,5 +1,11 @@
 # Proyecto
-Solución tecnológica para fortalecer la prevención de desastres en la Cruz Roja que integra: un dashboard web en tiempo real (HTML/Tailwind/JS) con Power BI embebido para monitorear barrios priorizados, un sistema de comunicación ciudadana por WhatsApp con un agente de IA que valida y estructura reportes locales, y un modelo predictivo que estima riesgo meteorológico y dispara alertas tempranas; el flujo orquesta datos mediante FastAPI (servicios y scoring), Make.com (ingesta y agregación) y n8n (automatización y envío por WhatsApp Business Cloud), con actualizaciones automáticas cada 30 s, trazabilidad de eventos, y reglas de activación por nivel de alerta; al combinar señales de la comunidad con pronósticos y analítica, permite decisiones más rápidas, focalización geográfica de recursos y una respuesta humanitaria más eficiente y humana.
+Solución tecnológica para fortalecer la prevención de desastres en la Cruz Roja que integra tres desarrollos clave para anticiparse a los desastres y mejorar la respuesta humanitaria:
+
+- Un dashboard web inteligente en tiempo real, construido con HTML, Tailwind y JavaScript, que incorpora Power BI embebido para visibilizar acciones humanitarias y monitorear barrios priorizados.
+- Un sistema de comunicación ciudadana vía WhatsApp, potenciado por un agente de inteligencia artificial que valida y estructura reportes locales.
+- Un modelo predictivo de riesgo meteorológico, que estima escenarios y activa alertas tempranas según niveles de alerta definidos.
+
+El flujo de datos se orquesta mediante FastAPI, Make.com y n8n, con actualizaciones automáticas cada 30 segundos, trazabilidad de eventos y reglas de activación. Al combinar señales comunitarias con pronósticos y analítica avanzada, se logra una gestión más precisa, focalización geográfica de recursos y una respuesta más eficiente y humana.
 
 ## Configuración de la API
 
